@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 import time
 
-logo_path = 'logo.png'
+logo_path = 'head.png'
 
 
 class OLED:
@@ -19,7 +19,7 @@ class OLED:
     def welcome(self):
         with canvas(self.device) as draw:
             draw.text((16, 28), 'Welcome home Sir', fill='white')
-        time.sleep(3)
+        time.sleep(1)
 
     def main(self):
         # logo初始化
@@ -30,20 +30,38 @@ class OLED:
         logo_np = np.array(logo)
         for i in range(len(logo_np)):
             for j in range(len(logo_np[i])):
-                if logo_np[i][j] < 100:
+                if logo_np[i][j] >= 200:
                     logo_np[i][j] = 0
+                    continue
+                if logo_np[i][j] < 200:
+                    logo_np[i][j] = 255
+                    continue
         # 黑白化
         logo = Image.fromarray(logo_np)
         self.logo = logo.convert('1')
-
-        print(time.strftime("%m/%d %H:%M %a", time.localtime()))
+        
+        heart=Image.open('_.png')
+        heart=heart.resize((98,68))
+        heart = heart.convert('L')
+        heart_np = np.array(heart)
+        for i in range(len(heart_np)):
+            for j in range(len(heart_np[i])):
+                # print(heart_np[i][j])
+                if heart_np[i][j] >= 150:
+                    heart_np[i][j] = 0
+                    continue
+                if heart_np[i][j] < 150:
+                    heart_np[i][j] = 255
+                    continue
+        self.heart=Image.fromarray(heart_np).convert('1')
 
         while True:
             with canvas(self.device) as draw:
-                draw.bitmap((0, 0), logo, fill='white')
-                draw.text((0, 32), time.strftime("%H:%M", time.localtime()))
-                draw.text((0, 44), time.strftime("%m/%d", time.localtime()))
-                draw.text((6, 56), time.strftime("%a", time.localtime()))
+                draw.bitmap((0, 0), self.logo, fill='white')
+                draw.text((0, 32), time.strftime("%H:%M", time.localtime()), fill='white')
+                draw.text((0, 42), time.strftime("%m/%d", time.localtime()), fill='white')
+                draw.text((6, 52), time.strftime("%a", time.localtime()), fill='white')
+                draw.bitmap((30,0),self.heart,fill='white')
 
 
 if __name__ == '__main__':
@@ -51,5 +69,6 @@ if __name__ == '__main__':
     oled.welcome()
     try:
         oled.main()
-    except:
+    except Exception as e:
+        print(e)
         exit()
