@@ -5,6 +5,8 @@ from PIL import Image, ImageDraw
 import numpy as np
 from time import sleep
 
+ImageDraw.Draw().text()
+
 oled = Image.open('OLED.png')
 serial = i2c(port=1, address=0x3C)
 device = ssd1306(serial)

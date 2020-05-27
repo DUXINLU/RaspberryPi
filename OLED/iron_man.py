@@ -3,7 +3,7 @@ from luma.core.render import canvas
 from luma.oled.device import ssd1306
 from PIL import Image, ImageDraw
 import numpy as np
-from time import sleep
+import time
 
 logo_path = 'logo.png'
 
@@ -14,16 +14,17 @@ class OLED:
         self.device = ssd1306(serial)
 
     def Animation(self, start, end):
+        pass
 
     def welcome(self):
         with canvas(self.device) as draw:
-            draw.text((15, 30), 'Welcome home Sir.', fill='white')
-        sleep(3)
+            draw.text((16, 28), 'Welcome home Sir', fill='white')
+        time.sleep(3)
 
-    def show_logo(self):
-        # 初始化
+    def main(self):
+        # logo初始化
         logo = Image.open(logo_path)
-        logo = logo.resize((40, 40))
+        logo = logo.resize((30, 30))
         logo = logo.convert('L')
         # 切图
         logo_np = np.array(logo)
@@ -35,35 +36,20 @@ class OLED:
         logo = Image.fromarray(logo_np)
         self.logo = logo.convert('1')
 
-        with canvas(self.device) as draw:
-            draw.bitmap((44, 15), logo, fill='white')
-        sleep(3)
+        print(time.strftime("%m/%d %H:%M %a", time.localtime()))
 
-        # logo移动
-        logox, logoy = 44, 15
-        logo_size = 40
-        for i in range(5):
-
-
-def init():
-
-
-def show():
-    # welcome text
-    with canvas(device) as draw:
-        draw.text((15, 30), 'welcome home Sir.', fill='white')
-    sleep(3)
-
-    # show logo
-    with canvas(device) as draw:
-        draw.bitmap((44, 15), logo, fill='white')
-    sleep(1)
-
-    logo = logo.resize((20, 20))
-    with canvas(device) as draw:
-        draw.bitmap((0, 0), logo, fill='white')
-    sleep(3)
+        while True:
+            with canvas(self.device) as draw:
+                draw.bitmap((0, 0), logo, fill='white')
+                draw.text((0, 32), time.strftime("%H:%M", time.localtime()))
+                draw.text((0, 44), time.strftime("%m/%d", time.localtime()))
+                draw.text((6, 56), time.strftime("%a", time.localtime()))
 
 
 if __name__ == '__main__':
-    show()
+    oled = OLED()
+    oled.welcome()
+    try:
+        oled.main()
+    except:
+        exit()
