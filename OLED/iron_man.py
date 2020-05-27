@@ -23,6 +23,25 @@ logo.convert('1')
 serial = i2c(port=1, address=0x3C)
 device = ssd1306(serial)
 
-with canvas(device) as draw:
-    draw.bitmap((44, 10), logo, fill='white')
+def init():
+    
 
+def show():
+    # welcome text
+    with canvas(device) as draw:
+        draw.text((15,30),'welcome home Sir',fill='white')
+    sleep(3)
+    
+    # show logo
+    with canvas(device) as draw:
+        draw.bitmap((44, 15), logo, fill='white')
+    sleep(1)
+    
+    logo=logo.resize((20,20))
+    with canvas(device) as draw:
+        
+        draw.bitmap((0, 0), logo, fill='white')
+    sleep(3)
+        
+if __name__=='__main__':
+    show()
